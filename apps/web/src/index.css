@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    
+    --primary: 180 70% 30%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+    
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    
+    --accent: 180 20% 90%;
+    --accent-foreground: 180 70% 30%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 180 70% 30%;
+    
+    --radius: 0.5rem;
+
+    /* Fear & Greed Index Colors */
+    --fng-extreme-fear: 0 72.2% 50.6%;
+    --fng-fear: 24.6 95% 48.2%;
+    --fng-neutral: 220 8.9% 46.1%;
+    --fng-greed: 160 84.1% 39.4%;
+    --fng-extreme-greed: 161.4 93.5% 30.4%;
+
+    /* Admin Tokens */
+    --admin-bg: 0 0% 98%;
+    --admin-text: 0 0% 10%;
+    --admin-sidebar-bg: 0 0% 100%;
+    --admin-border: 0 0% 90%;
+    --admin-hover: 0 0% 96%;
+    --admin-accent: 180 70% 30%;
+    --admin-success: 160 84.1% 39.4%;
+    --admin-error: 0 84.2% 60.2%;
+    --admin-warning: 38 92% 50%;
+  }
+
+  .dark {
+    --background: 0 0% 8%; 
+    --foreground: 0 0% 96%;
+    
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 96%;
+    
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 96%;
+    
+    --primary: 180 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 96%;
+    
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 65%;
+    
+    --accent: 180 30% 20%;
+    --accent-foreground: 180 60% 45%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 180 60% 45%;
+
+    /* Fear & Greed Index Colors */
+    --fng-extreme-fear: 0 72.2% 55%; 
+    --fng-fear: 24.6 95% 55%;        
+    --fng-neutral: 220 8.9% 60%;     
+    --fng-greed: 160 84.1% 45%;      
+    --fng-extreme-greed: 161.4 93.5% 40%;
+
+    /* Admin Tokens (Dark Mode) */
+    --admin-bg: 0 0% 5%;
+    --admin-text: 0 0% 96%;
+    --admin-sidebar-bg: 0 0% 8%;
+    --admin-border: 0 0% 15%;
+    --admin-hover: 0 0% 12%;
+    --admin-accent: 180 60% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    text-wrap: balance;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .font-sans {
+    font-family: 'Inter', sans-serif;
+  }
+  .spacing-tight {
+    @apply py-8 md:py-12;
+  }
+  .spacing-hero {
+    @apply py-10 md:py-16;
+  }
+  .spacing-sidebar {
+    @apply p-5 md:p-6 lg:p-7;
+  }
+
+  /* Admin Utilities */
+  .admin-panel {
+    @apply bg-[hsl(var(--admin-bg))] text-[hsl(var(--admin-text))] min-h-screen;
+  }
+  .admin-card {
+    @apply bg-[hsl(var(--admin-sidebar-bg))] border border-[hsl(var(--admin-border))] rounded-xl shadow-sm p-6;
+  }
+  .admin-input {
+    @apply bg-transparent border border-[hsl(var(--admin-border))] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--admin-accent))];
+  }
+}

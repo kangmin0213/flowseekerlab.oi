@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Save, Info } from 'lucide-react';
+import { Save, Info, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout.jsx';
 import FormField from '@/components/admin/FormField.jsx';
@@ -17,7 +17,81 @@ const defaults = {
   twitter_handle: '@flowseekerlab',
   posts_per_page: 20,
   comments_enabled: true,
+  footer_nav: [],
+  footer_social: [],
 };
+
+const toLinkArray = (raw) => {
+  let v = raw;
+  if (typeof v === 'string') {
+    try { v = JSON.parse(v); } catch { v = []; }
+  }
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((it) => it && typeof it === 'object')
+    .map((it) => ({ label: String(it.label ?? ''), url: String(it.url ?? '') }));
+};
+
+const cleanLinkArray = (arr) =>
+  arr
+    .map((it) => ({ label: (it.label || '').trim(), url: (it.url || '').trim() }))
+    .filter((it) => it.label && (it.url.startsWith('http') || it.url.startsWith('/')));
+
+function LinkRepeater({ label, hint, value, onChange, urlPlaceholder = '/path or https://…' }) {
+  const rows = Array.isArray(value) ? value : [];
+  const set = (i, key, v) => {
+    const next = rows.map((r, idx) => (idx === i ? { ...r, [key]: v } : r));
+    onChange(next);
+  };
+  const add = () => onChange([...rows, { label: '', url: '' }]);
+  const remove = (i) => onChange(rows.filter((_, idx) => idx !== i));
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">{label}</span>
+        <button
+          type="button"
+          onClick={add}
+          className="text-xs flex items-center gap-1 text-[hsl(var(--admin-accent))] hover:underline"
+        >
+          <Plus className="h-3.5 w-3.5" /> Add row
+        </button>
+      </div>
+      {hint && <p className="text-xs text-[hsl(var(--muted-foreground))]">{hint}</p>}
+      {rows.length === 0 ? (
+        <p className="text-xs italic text-[hsl(var(--muted-foreground))]">No links yet — click “Add row” to create one.</p>
+      ) : (
+        <div className="space-y-2">
+          {rows.map((row, i) => (
+            <div key={i} className="grid grid-cols-12 gap-2 items-center">
+              <input
+                value={row.label}
+                onChange={(e) => set(i, 'label', e.target.value)}
+                placeholder="Label"
+                className="col-span-4 bg-transparent border border-[hsl(var(--admin-border))] rounded-md px-3 py-2 text-sm focus:border-[hsl(var(--admin-accent))] focus:outline-none"
+              />
+              <input
+                value={row.url}
+                onChange={(e) => set(i, 'url', e.target.value)}
+                placeholder={urlPlaceholder}
+                className="col-span-7 bg-transparent border border-[hsl(var(--admin-border))] rounded-md px-3 py-2 text-sm font-mono focus:border-[hsl(var(--admin-accent))] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="col-span-1 p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--admin-error))]"
+                aria-label="Remove row"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function SettingsPage() {
   const { currentUser, isAdmin } = useAuth();
@@ -42,6 +116,8 @@ function SettingsPage() {
           posts_per_page: row.posts_per_page ?? defaults.posts_per_page,
           comments_enabled:
             typeof row.comments_enabled === 'boolean' ? row.comments_enabled : defaults.comments_enabled,
+          footer_nav: toLinkArray(row.footer_nav),
+          footer_social: toLinkArray(row.footer_social),
         });
       } else {
         setRecordId(null);
@@ -84,6 +160,8 @@ function SettingsPage() {
         twitter_handle: site.twitter_handle.trim(),
         posts_per_page: Math.min(100, Math.max(1, Number(site.posts_per_page) || 20)),
         comments_enabled: !!site.comments_enabled,
+        footer_nav: cleanLinkArray(site.footer_nav || []),
+        footer_social: cleanLinkArray(site.footer_social || []),
       };
       if (recordId) {
         await pb.collection('cms_settings').update(recordId, payload, { $autoCancel: false });
@@ -266,6 +344,19 @@ function SettingsPage() {
                   </label>
                 </FormField>
               </div>
+              <LinkRepeater
+                label="Footer Navigation"
+                hint="Internal paths must start with / (e.g. /about). Privacy/Terms are always shown."
+                value={site.footer_nav}
+                onChange={(next) => updateSite('footer_nav', next)}
+              />
+              <LinkRepeater
+                label="Footer Connect (social)"
+                hint="External URLs only (https://…). Overrides VITE_SITE_* env vars when at least one row is set."
+                value={site.footer_social}
+                onChange={(next) => updateSite('footer_social', next)}
+                urlPlaceholder="https://twitter.com/your-handle"
+              />
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"

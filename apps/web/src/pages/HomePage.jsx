@@ -82,8 +82,8 @@ function HomePage() {
 
       <main className="flex-grow">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 spacing-tight">
-          <div className="flex flex-col lg:flex-row">
-            <div className="lg:w-2/3 lg:pr-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-8">
               <div className="mb-8">
                 <h2 className="text-sm font-bold uppercase tracking-widest text-foreground pb-2 border-b border-border">
                   {t('home.latest')}
@@ -122,7 +122,9 @@ function HomePage() {
               )}
             </div>
 
-            <Sidebar />
+            <div className="lg:col-span-4">
+              <Sidebar />
+            </div>
           </div>
         </div>
       </main>

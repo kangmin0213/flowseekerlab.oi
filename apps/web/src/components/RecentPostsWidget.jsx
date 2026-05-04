@@ -14,7 +14,7 @@ function RecentPostsWidget() {
       try {
         const list = await pb.collection('posts').getList(1, 4, {
           filter: 'status = "published"',
-          sort: '-published_at',
+          sort: '-views,-published_at',
           $autoCancel: false,
         });
         if (!cancelled) setPosts(list.items);
@@ -32,7 +32,7 @@ function RecentPostsWidget() {
   return (
     <div>
       <h3 className="text-sm font-bold uppercase tracking-widest text-foreground mb-4 pb-2 border-b border-border font-serif">
-        Recent Flows
+        Popular Flows
       </h3>
       <div className="flex flex-col gap-4">
         {posts.map((post) => (

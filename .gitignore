@@ -20,6 +20,8 @@ Thumbs.db
 
 apps/pocketbase/pocketbase
 apps/pocketbase/pocketbase.exe
+# PocketBase local DB (개인·운영 데이터; GitHub에 올리지 않음)
+apps/pocketbase/pb_data/*.db
 apps/pocketbase/pb_data/*.db-shm
 apps/pocketbase/pb_data/*.db-wal
 apps/pocketbase/pb_data/backups/

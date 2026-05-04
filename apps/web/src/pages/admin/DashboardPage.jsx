@@ -10,7 +10,8 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
-import { FileText, Users, Eye, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FileText, Users, Eye, MessageSquare, Sparkles } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout.jsx';
 import LoadingSpinner from '@/components/admin/LoadingSpinner.jsx';
 import pb from '@/lib/pocketbaseClient.js';
@@ -104,25 +105,52 @@ function DashboardPage() {
             <StatCard title="Comments" value={stats?.totalComments || 0} icon={MessageSquare} />
           </div>
 
+          {(stats?.totalPosts || 0) === 0 && (
+            <div className="admin-card mb-8 flex items-start gap-3">
+              <div className="p-2 bg-[hsl(var(--admin-accent))/10] text-[hsl(var(--admin-accent))] rounded-md">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-serif font-semibold mb-1">Your blog is empty.</h3>
+                <p className="text-sm text-[hsl(var(--muted-foreground))] mb-3">
+                  Charts will populate as you publish posts and visitors generate views. All numbers above are read live from PocketBase — there is no demo data.
+                </p>
+                <Link
+                  to="/admin/posts/new"
+                  className="inline-flex items-center gap-2 bg-[hsl(var(--admin-accent))] text-white px-3 py-1.5 rounded-md text-sm font-medium"
+                >
+                  <FileText className="h-4 w-4" /> Write your first post
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="admin-card">
               <h3 className="font-serif font-semibold mb-4">Posts (Last 30 Days)</h3>
               <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={postsTrend}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--admin-border))" />
-                    <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <YAxis allowDecimals={false} stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <Tooltip
-                      contentStyle={{
-                        background: 'hsl(var(--admin-sidebar-bg))',
-                        border: '1px solid hsl(var(--admin-border))',
-                        borderRadius: 6,
-                      }}
-                    />
-                    <Line type="monotone" dataKey="posts" stroke="hsl(var(--admin-accent))" strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
+                {postsTrend.every((d) => d.posts === 0) ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center text-sm text-[hsl(var(--muted-foreground))] gap-2">
+                    <p>No posts created in the last 30 days.</p>
+                    <p className="text-xs">This chart will start filling in as soon as you publish.</p>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={postsTrend}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--admin-border))" />
+                      <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis allowDecimals={false} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <Tooltip
+                        contentStyle={{
+                          background: 'hsl(var(--admin-sidebar-bg))',
+                          border: '1px solid hsl(var(--admin-border))',
+                          borderRadius: 6,
+                        }}
+                      />
+                      <Line type="monotone" dataKey="posts" stroke="hsl(var(--admin-accent))" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </div>
 

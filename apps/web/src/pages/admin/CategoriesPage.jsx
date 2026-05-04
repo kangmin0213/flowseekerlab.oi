@@ -17,9 +17,11 @@ const slugify = (s) =>
     .replace(/-+/g, '-');
 
 function CategoryForm({ initial, onSave, onCancel }) {
-  const [form, setForm] = useState(
-    initial || { name: '', slug: '', description: '', parent_id: '' }
-  );
+  const [form, setForm] = useState(() => ({
+    name: initial?.name ?? '',
+    slug: initial?.slug ?? '',
+    description: initial?.description ?? '',
+  }));
   const [saving, setSaving] = useState(false);
 
   const submit = async (e) => {
@@ -162,17 +164,30 @@ function CategoriesPage() {
       </div>
 
       {creating && (
-        <CategoryForm onSave={create} onCancel={() => setCreating(false)} />
+        <CategoryForm key="new" onSave={create} onCancel={() => setCreating(false)} />
       )}
       {editing && (
-        <CategoryForm initial={editing} onSave={update} onCancel={() => setEditing(null)} />
+        <CategoryForm key={editing.id} initial={editing} onSave={update} onCancel={() => setEditing(null)} />
       )}
 
       <div className="admin-card p-0 overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center"><LoadingSpinner /></div>
         ) : items.length === 0 ? (
-          <EmptyState title="No categories" description="Create your first category." />
+          <EmptyState
+            title="No categories"
+            description="Create your first category to start grouping posts."
+            action={
+              !creating && !editing ? (
+                <button
+                  onClick={() => setCreating(true)}
+                  className="bg-[hsl(var(--admin-accent))] text-white px-4 py-2 rounded-md text-sm font-medium inline-flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" /> New Category
+                </button>
+              ) : null
+            }
+          />
         ) : (
           <table className="w-full text-left text-sm">
             <thead className="bg-[hsl(var(--admin-hover))] border-b border-[hsl(var(--admin-border))] text-[hsl(var(--muted-foreground))] uppercase tracking-wider text-xs">

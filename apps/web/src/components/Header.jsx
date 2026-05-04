@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDarkMode } from '@/contexts/DarkModeContext.jsx';
 import { useLanguage } from '@/contexts/LanguageContext.jsx';
 import pb from '@/lib/pocketbaseClient.js';
+import { getSiteMeta, CMS_DEFAULTS } from '@/lib/cmsSettings.js';
 
 function Header() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -12,6 +13,7 @@ function Header() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [siteName, setSiteName] = useState(CMS_DEFAULTS.site_name);
 
   useEffect(() => {
     (async () => {
@@ -25,6 +27,7 @@ function Header() {
         // ignore
       }
     })();
+    getSiteMeta().then((m) => setSiteName(m.site_name)).catch(() => {});
   }, []);
 
   const navLinks = [
@@ -45,7 +48,7 @@ function Header() {
           <div className="flex items-center">
             <Link to="/" className="group relative inline-block">
               <span className="font-serif text-3xl font-bold tracking-tight text-foreground">
-                FlowSeeker
+                {siteName}
               </span>
               <span className="absolute -bottom-1 left-0 h-[2px] w-full origin-left scale-x-100 bg-foreground transition-transform duration-300 ease-out group-hover:scale-x-0"></span>
             </Link>

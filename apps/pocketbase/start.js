@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process';
-import { existsSync, statSync } from 'node:fs';
+import { existsSync, statSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -38,9 +38,7 @@ function readVersion() {
   try {
     const versionFile = path.join(__dirname, '.pocketbase-version');
     if (existsSync(versionFile)) {
-      return (
-        require('node:fs').readFileSync(versionFile, 'utf8').trim() || '0.36.7'
-      );
+      return readFileSync(versionFile, 'utf8').trim() || '0.36.7';
     }
   } catch {
     /* ignore */

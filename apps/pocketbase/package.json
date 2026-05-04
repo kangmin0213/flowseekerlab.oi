@@ -6,7 +6,7 @@
 	"scripts": {
 		"setup": "node setup.js",
 		"dev": "node start.js serve --http=0.0.0.0:8090 --dir=./pb_data --migrationsDir=./pb_migrations --hooksDir=./pb_hooks --hooksWatch=false",
-		"start": "node start.js serve --http=0.0.0.0:8090 --dir=./pb_data --migrationsDir=./pb_migrations --hooksDir=./pb_hooks --hooksWatch=false",
+		"start": "node setup.js && node railway-start.mjs",
 		"migrations:up": "node start.js migrate up --dir=./pb_data --migrationsDir=./pb_migrations --hooksDir=./pb_hooks",
 		"migrations:revert": "node start.js migrate down --dir=./pb_data --migrationsDir=./pb_migrations --hooksDir=./pb_hooks",
 		"update": "node start.js update --backup=0"

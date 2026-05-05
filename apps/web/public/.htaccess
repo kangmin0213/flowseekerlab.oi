@@ -19,12 +19,11 @@
 	RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
 	RewriteRule ^ https://flowseekerlab.io%{REQUEST_URI} [L,R=301]
 
-	# Backend reverse-proxy path: never let the SPA fallback swallow it.
-	# If a real proxy/handler exists for /hcgi/platform/* it serves the request;
-	# otherwise the server returns a clean 404 so PB API calls fail loudly
-	# instead of silently receiving the SPA HTML shell.
-	RewriteCond %{REQUEST_URI} ^/hcgi/platform(/|$) [NC]
-	RewriteRule ^ - [L]
+	# /hcgi/platform/* was the legacy same-origin PocketBase proxy path.
+	# PocketBase now lives off-Hostinger at VITE_POCKETBASE_URL (option B), so any
+	# request to this path is stale (cached old bundle, bookmark, external link).
+	# Return 410 Gone so callers fail loudly instead of silently getting the SPA HTML.
+	RewriteRule ^hcgi/platform(/|$) - [G,L]
 
 	# SPA fallback
 	RewriteCond %{REQUEST_FILENAME} !-f

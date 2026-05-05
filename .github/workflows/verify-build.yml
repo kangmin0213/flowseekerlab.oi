@@ -1,4 +1,6 @@
 # Single pipeline check: same `npm run build:website` as you should run before deploy.
+# CI injects production env from GitHub Secrets so the bundle ships with the right
+# PocketBase URL — never commit the actual value to the repo.
 name: Verify web build
 
 on:
@@ -21,6 +23,23 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Write apps/web/.env.production from secrets
+        env:
+          VITE_POCKETBASE_URL: ${{ secrets.VITE_POCKETBASE_URL }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: |
+          set -e
+          if [ -z "${VITE_POCKETBASE_URL}" ]; then
+            echo "::error::VITE_POCKETBASE_URL secret is not set."
+            exit 1
+          fi
+          {
+            echo "VITE_POCKETBASE_URL=${VITE_POCKETBASE_URL}"
+            if [ -n "${SITE_URL}" ]; then
+              echo "SITE_URL=${SITE_URL}"
+            fi
+          } > apps/web/.env.production
 
       - name: Production web build
         run: npm run build:website
